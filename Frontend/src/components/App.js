@@ -8,7 +8,6 @@ function App() {
   return (
     <BrowserRouter>
       <Switch>
-        <Route exact path="/ViewMarcaciones" component={ViewMarcaciones} />
         <Route exact path="/BotonIndex" component={BotonIndex} />
         <Route component={NotFound} />
       </Switch>
