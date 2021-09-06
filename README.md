@@ -1,6 +1,6 @@
 # SpringBootReactJs
 
-Este repositorio contiene un desafio de destreza y talento, el cual se desarrollo en el proceso de selección al cargo de Desarrollador Full Stack - Septiembre 2021.
+Este repositorio contiene el desafio de destreza y talento, el cual se desarrollo para el proceso de selección al cargo de Desarrollador Full Stack Jr. - Septiembre 2021.
 
 
 ## Pre-requisitos 📋
