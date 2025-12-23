@@ -39,38 +39,62 @@ function BotonIndex() {
   };
 
   return (
-    <div>
+    <div className="container my-4">
       <Form username="Obtener Usuarios" />
-      <div className="form-container">
+
+      <div className="form-container mb-3">
         <form onSubmit={handleSubmit}>
           <button type="submit" className="btn btn-primary" disabled={loading}>
-            {loading ? 'Cargando...' : 'Obtener'}
+            {loading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Cargando...
+              </>
+            ) : (
+              'Obtener'
+            )}
           </button>
         </form>
       </div>
 
-      <div className="list-wrapper">
-        <ul className="list-group">
-          {error && (
-            <li className="list-group-item list-group-item-danger">Error: {error}</li>
-          )}
+      {error && (
+        <div className="alert alert-danger" role="alert">
+          {String(error)}
+        </div>
+      )}
 
-          {users.length === 0 && !loading && !error && (
-            <li className="list-group-item">No hay usuarios. Pulsa "Obtener".</li>
-          )}
+      <div className="row">
+        {users.length === 0 && !loading && !error && (
+          <div className="col-12">
+            <div className="alert alert-secondary">No hay usuarios. Pulsa "Obtener" para cargar datos.</div>
+          </div>
+        )}
 
-          {users.map((user, i) => (
-            <li
-              className="list-group-item list-group-item-action"
-              key={user && (user.id ?? `${user.email || 'u'}-${i}`)}
-            >
-              <p><strong>Name:</strong> {user?.name}</p>
-              <p><strong>Username:</strong> {user?.username}</p>
-              <p><strong>Company:</strong> {user?.company?.name || 'N/A'}</p>
-              <p><strong>Email:</strong> {user?.email}</p>
-            </li>
-          ))}
-        </ul>
+        {users.map((user, i) => (
+          <div className="col-12 col-md-6 col-lg-4 mb-3" key={user && (user.id ?? `${user.email || 'u'}-${i}`)}>
+            <div className="card h-100 shadow-sm">
+              <div className="card-body d-flex gap-3 align-items-start">
+                <img
+                  src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=0D8ABC&color=fff&rounded=true&size=64`}
+                  alt={user?.name || 'avatar'}
+                  className="rounded-circle"
+                  style={{ width: 64, height: 64, objectFit: 'cover' }}
+                />
+                <div className="flex-grow-1">
+                  <h5 className="card-title mb-1">{user?.name || '—'}</h5>
+                  <p className="mb-1">
+                    <span className="badge bg-secondary me-2">@{user?.username || '—'}</span>
+                    <small className="text-muted">{user?.email || '—'}</small>
+                  </p>
+                  <p className="mb-0"><strong>Compañía:</strong> {user?.company?.name || 'N/A'}</p>
+                </div>
+              </div>
+              <div className="card-footer bg-transparent">
+                <small className="text-muted">ID: {user?.id ?? '—'}</small>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
