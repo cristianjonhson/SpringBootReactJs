@@ -20,7 +20,7 @@ function UserCard({ user }) {
         </div>
       </div>
       <div className="card-footer bg-transparent">
-        <small className="text-muted">ID: {user?.id ?? '—'}</small>
+        <small className="text-muted">ID: {user?.id ? String(user.id) : '—'}</small>
       </div>
     </div>
   );
