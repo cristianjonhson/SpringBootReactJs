@@ -1,43 +1,43 @@
-import React from "react";
-import Form from "../components/TitleForm";
-import axios from "axios";
-
+import React from 'react';
+import Form from '../components/TitleForm';
+import axios from 'axios';
 
 class BotonIndex extends React.Component {
-  
   state = {
-    name:'',
+    name: '',
     username: '',
     company: '',
-    email:'',
-    users: []
-}  
+    email: '',
+    users: [],
+  };
 
-getUsers = async () => {
-  const res = await axios.get('http://localhost:8765/users');
-  this.setState({
-      users: res.data
-  });
-}
+  getUsers = async () => {
+    console.log('getUsers: llamando a backend /users');
+    try {
+      const res = await axios.get('http://localhost:8765/users');
+      console.log('getUsers: respuesta recibida', res.data && res.data.length);
+      this.setState({ users: res.data });
+    } catch (err) {
+      console.error('getUsers: error', err && (err.response || err.message || err));
+    }
+  };
+
+  componentDidMount() {
+    console.log('BotonIndex montado');
+    // opcional: precargar usuarios
+    // this.getUsers();
+  }
 
   handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("state", this.state);
+    console.log('state', this.state);
     try {
-      const res = await axios.get(
-        "http://localhost:8765/users")
-        this.setState({
-          users: res.data
-      });
-      console.log("respuesta axios", res.data);
-      this.setState({ name: '' });
-      this.setState({ username: '' });
-      this.setState({ company: '' });
-      this.setState({ email: '' });
-        this.getUsers();
-  }           
-    catch (error) {
-      console.log(error.response);
+      const res = await axios.get('http://localhost:8765/users');
+      this.setState({ users: res.data, name: '', username: '', company: '', email: '' });
+      console.log('respuesta axios', res.data);
+      this.getUsers();
+    } catch (error) {
+      console.log(error.response || error);
     }
   };
 
@@ -52,21 +52,21 @@ getUsers = async () => {
             </button>
           </form>
         </div>
-        <div className="col-md-8" >
-        <ul className="list-group">
-            {
-                this.state.users.map(user => (
-                    <li className="list-group-item list-group-item-action"
-                    key={user.id} >
-                    Name: {user.name}<br /> 
-                    Username: {user.username}<br /> 
-                    Name Company: {user.company.name}<br />  
-                    Email: {user.email}
-                    </li>
-                ))
-            }
-        </ul>
-    </div>
+        <div className="col-md-8">
+          <ul className="list-group">
+            {this.state.users.map((user) => (
+              <li className="list-group-item list-group-item-action" key={user.id}>
+                Name: {user.name}
+                <br />
+                Username: {user.username}
+                <br />
+                Name Company: {user.company?.name}
+                <br />
+                Email: {user.email}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     );
   }
