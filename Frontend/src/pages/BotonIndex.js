@@ -22,7 +22,13 @@ function BotonIndex() {
     setError(null);
     try {
       const res = await axios.get('http://localhost:8765/users');
-      if (mountedRef.current) setUsers(res.data || []);
+      // Agregar ID basado en índice si no existe
+      const usersWithIds = (res.data || []).map((user, index) => ({
+        ...user,
+        id: user.id ?? index + 1
+      }));
+      if (mountedRef.current) setUsers(usersWithIds);
+      console.log('fetchUsers response:', usersWithIds);
     } catch (err) {
       console.error('fetchUsers error:', err && (err.response || err.message || err));
       if (mountedRef.current) setError(err && (err.message || 'Error al obtener usuarios'));
