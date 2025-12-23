@@ -52,9 +52,11 @@ Este repositorio contiene una aplicación de ejemplo que integra un backend en S
 Resumen técnico
 ---------------
 - Backend: Spring Boot 2.5.4 (parent), Java 11
-- Frontend: React 17.0.2, react-scripts 4.0.3
+- Frontend: React 17.0.2 (componentes funcionales con Hooks), react-scripts 4.0.3
+- UI: Bootstrap 5 con cards, avatars generados (ui-avatars API), spinner y alerts
+- Estilos: Gradiente animado, glass effect, diseño responsive
 - Gestor de dependencias backend: Maven (incluye `mvnw`/`mvnw.cmd`)
-- Probado con Node.js (recomendado) >= 14 y npm >= 6
+- Probado con Node.js 16 (recomendado con `nvm`) y npm >= 6
 
 Estructura de carpetas
 ----------------------
@@ -63,7 +65,11 @@ Raíz del proyecto (resumen):
 - `Frontend/` : Código del cliente React
 	- `package.json` : dependencias y scripts del frontend
 	- `public/` : archivos estáticos (index.html, manifest)
-	- `src/` : código fuente React (`index.js`, `components/`, `pages/`, `css/`)
+	- `src/` : código fuente React
+		- `index.js` : punto de entrada (React 17 render)
+		- `components/` : componentes reutilizables (`App.js`, `TitleForm.js`, `UserCard.js`)
+		- `pages/` : páginas (`BotonIndex.js` con hooks, `NotFound.js`)
+		- `css/` : estilos globales (`Form.css` con gradiente animado y glass effect)
 - `src/main/java/repositoryfullstack/` : código Java del backend
 	- `Configuration/` : configuraciones de la app
 	- `Controller/` : controladores REST (ej. `UserController.java`)
@@ -115,7 +121,9 @@ Recomendaciones y notas
 -----------------------
 - Java: Este proyecto usa `java.version` = 11 (ver `pom.xml`).
 - Spring Boot: versión 2.5.4 (parent) — actualizar con cuidado si cambia el ecosistema.
-- Node / npm: Las dependencias de `react-scripts@4` funcionan bien con Node >= 14; si usa `nvm` instale `nvm use 14`.
+- Node / npm: Las dependencias de `react-scripts@4` funcionan bien con Node 16 (recomendado); si usa Node >= 17 puede encontrar errores de OpenSSL. Solución: usar `nvm use 16` o agregar `NODE_OPTIONS=--openssl-legacy-provider` en scripts.
+- React: El proyecto usa componentes funcionales con Hooks (`useState`, `useEffect`, `useCallback`) para manejo de estado y efectos secundarios.
+- UI/UX: Interfaz moderna con Bootstrap 5, cards con glass effect, avatares generados dinámicamente y gradiente animado en el fondo.
 - CORS: Si necesita probar la API localmente, el frontend usa `axios` para llamadas; asegúrese de que el backend permita CORS si no están en el mismo origen.
 
 Pruebas
@@ -148,12 +156,22 @@ Licencia
 --------
 Este repositorio no incluye un archivo LICENSE; agregue uno si desea declarar una licencia explícita.
 
-Cambios recientes
 -----------------
-- README actualizado (Diciembre 2025): estructura, comandos y versiones.
+- **Diciembre 2025**: 
+  - README actualizado con estructura completa, comandos y versiones.
+  - Frontend refactorizado: componentes funcionales con React Hooks (useState, useEffect, useCallback).
+  - Componente `UserCard` extraído para mejor organización del código.
+  - UI mejorada: cards con avatars dinámicos (ui-avatars API), spinner en botón, alerts para errores.
+  - Estilos modernos: gradiente animado en fondo, glass effect en cards, patrón overlay sutil.
+  - Manejo robusto de estados: loading, error, cancelación de efectos al desmontar.
+  - `.gitignore` actualizado para excluir `node_modules`, `build`, `.env` y archivos del sistema.
+  - Redirección automática de ruta raíz (`/`) a `/BotonIndex`.
 
-Si desea, puedo:
-- Añadir un script `start-all` que arranque backend y frontend con un solo comando.
-- Incluir un `README` en inglés o agregar instrucciones Docker.
+Capturas
+--------
+- Interfaz principal: Cards responsivas con avatares y datos de usuario desde API externa.
+- Fondo animado: Gradiente sutil con efecto glass en las tarjetas.
+- Estados visuales: Spinner durante carga, mensajes de error y estado vacío.
 
 ---
+
