@@ -35,7 +35,6 @@ class BotonIndex extends React.Component {
       const res = await axios.get('http://localhost:8765/users');
       this.setState({ users: res.data, name: '', username: '', company: '', email: '' });
       console.log('respuesta axios', res.data);
-      this.getUsers();
     } catch (error) {
       console.log(error.response || error);
     }
@@ -54,8 +53,11 @@ class BotonIndex extends React.Component {
         </div>
         <div className="col-md-8">
           <ul className="list-group">
-            {this.state.users.map((user) => (
-              <li className="list-group-item list-group-item-action" key={user.id}>
+            {this.state.users.map((user, i) => (
+              <li
+                className="list-group-item list-group-item-action"
+                key={user && (user.id ?? `${user.email || 'u'}-${i}`)}
+              >
                 Name: {user.name}
                 <br />
                 Username: {user.username}
