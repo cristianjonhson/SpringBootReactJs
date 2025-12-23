@@ -1,77 +1,79 @@
-import React from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import Form from '../components/TitleForm';
 import axios from 'axios';
 
-class BotonIndex extends React.Component {
-  state = {
-    name: '',
-    username: '',
-    company: '',
-    email: '',
-    users: [],
-  };
+function BotonIndex() {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  getUsers = async () => {
-    console.log('getUsers: llamando a backend /users');
+  // ref para saber si el componente está montado y evitar setState después de un unmount
+  const mountedRef = useRef(true);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
+  const fetchUsers = useCallback(async () => {
+    setLoading(true);
+    setError(null);
     try {
       const res = await axios.get('http://localhost:8765/users');
-      console.log('getUsers: respuesta recibida', res.data && res.data.length);
-      this.setState({ users: res.data });
+      if (mountedRef.current) setUsers(res.data || []);
     } catch (err) {
-      console.error('getUsers: error', err && (err.response || err.message || err));
+      console.error('fetchUsers error:', err && (err.response || err.message || err));
+      if (mountedRef.current) setError(err && (err.message || 'Error al obtener usuarios'));
+    } finally {
+      if (mountedRef.current) setLoading(false);
     }
-  };
+  }, []);
 
-  componentDidMount() {
-    console.log('BotonIndex montado');
-    // opcional: precargar usuarios
-    // this.getUsers();
-  }
+  // opción: precargar usuarios al montar
+  // useEffect(() => { fetchUsers(); }, [fetchUsers]);
 
-  handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('state', this.state);
-    try {
-      const res = await axios.get('http://localhost:8765/users');
-      this.setState({ users: res.data, name: '', username: '', company: '', email: '' });
-      console.log('respuesta axios', res.data);
-    } catch (error) {
-      console.log(error.response || error);
-    }
+    await fetchUsers();
   };
 
-  render() {
-    return (
-      <div>
-        <Form username="Obtener Usuarios" />
-        <div className="container">
-          <form onSubmit={this.handleSubmit}>
-            <button type="submit" className="btn btn-primary">
-              Obtener
-            </button>
-          </form>
-        </div>
-        <div className="col-md-8">
-          <ul className="list-group">
-            {this.state.users.map((user, i) => (
-              <li
-                className="list-group-item list-group-item-action"
-                key={user && (user.id ?? `${user.email || 'u'}-${i}`)}
-              >
-                Name: {user.name}
-                <br />
-                Username: {user.username}
-                <br />
-                Name Company: {user.company?.name}
-                <br />
-                Email: {user.email}
-              </li>
-            ))}
-          </ul>
-        </div>
+  return (
+    <div>
+      <Form username="Obtener Usuarios" />
+      <div className="form-container">
+        <form onSubmit={handleSubmit}>
+          <button type="submit" className="btn btn-primary" disabled={loading}>
+            {loading ? 'Cargando...' : 'Obtener'}
+          </button>
+        </form>
       </div>
-    );
-  }
+
+      <div className="list-wrapper">
+        <ul className="list-group">
+          {error && (
+            <li className="list-group-item list-group-item-danger">Error: {error}</li>
+          )}
+
+          {users.length === 0 && !loading && !error && (
+            <li className="list-group-item">No hay usuarios. Pulsa "Obtener".</li>
+          )}
+
+          {users.map((user, i) => (
+            <li
+              className="list-group-item list-group-item-action"
+              key={user && (user.id ?? `${user.email || 'u'}-${i}`)}
+            >
+              <p><strong>Name:</strong> {user?.name}</p>
+              <p><strong>Username:</strong> {user?.username}</p>
+              <p><strong>Company:</strong> {user?.company?.name || 'N/A'}</p>
+              <p><strong>Email:</strong> {user?.email}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
 }
 
 export default BotonIndex;
